@@ -4,7 +4,7 @@ namespace Catalog.Api.Extensions;
 
 public static class ServiceExtension
 {
-    public static void LovelynExtensions(this IServiceCollection services)
+    public static void ServicesExtension(this IServiceCollection services)
     {
         services.AddScoped<ICatalogContext, CatalogContext>();
         services.AddScoped<IProductRepository, ProductRepository>();

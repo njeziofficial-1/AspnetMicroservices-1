@@ -1,4 +1,6 @@
-﻿namespace Catalog.Api.Repositories;
+﻿using System.Linq.Expressions;
+
+namespace Catalog.Api.Repositories;
 
 public class ProductRepository : IProductRepository
 {
@@ -32,13 +34,13 @@ public class ProductRepository : IProductRepository
 
     public async Task<IEnumerable<Product>> GetProductByName(string name)
     {
-        FilterDefinition<Product> filter = Builders<Product>.Filter.ElemMatch(x => x.Name, name);
+        FilterDefinition<Product> filter = Builders<Product>.Filter.Eq(x => x.Name, name);
         return await FilterRequest(filter);
     }
 
     public async Task<IEnumerable<Product>> GetProductByCategory(string category)
     {
-        FilterDefinition<Product> filter = Builders<Product>.Filter.ElemMatch(x => x.Category, category);
+        FilterDefinition<Product> filter = Builders<Product>.Filter.Eq(x => x.Category, category);
         return await FilterRequest(filter);
     }
 
@@ -51,11 +53,14 @@ public class ProductRepository : IProductRepository
         return updateResult.IsAcknowledged && updateResult.ModifiedCount > 0;
     }
 
-    private async Task<IEnumerable<Product>> FilterRequest(FilterDefinition<Product>filter)
-    {
-        return await _context
+    private async Task<IEnumerable<Product>> FilterRequest(FilterDefinition<Product> filter)
+    => await _context
             .Products
             .Find(filter)
             .ToListAsync();
-    }
+    private async Task<IEnumerable<Product>> FilterRequest(Expression<Func<Product, bool>> filter)
+    => await _context
+        .Products
+        .Find(filter)
+        .ToListAsync();
 }

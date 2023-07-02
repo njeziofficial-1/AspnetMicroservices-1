@@ -52,6 +52,19 @@ public class CatalogController : ControllerBase
         }
         return Ok(product);
     }
+    [HttpGet]
+    [Route("[action]/{name}", Name = "GetProductByName")]
+    [ProducesResponseType(typeof(IEnumerable<Product>), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> GetProductByName(string name)
+    {
+        var product = await _repository.GetProductByName(name);
+        if (product == null)
+        {
+            _logger.LogError($"Product with name: {name}, not found");
+            return NotFound();
+        }
+        return Ok(product);
+    }
 
     [HttpPost]
     [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
